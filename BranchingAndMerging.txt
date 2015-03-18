@@ -1,0 +1,47 @@
+Adapted from: http://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging
+
+Create a new branch:
+
+ $ git checkout -b <branch>
+
+Where <branch> is a short text tag label name for the branch, e.g. 'issue53'
+
+'git checkout -b' is shorthand for:
+ $ git branch <branch>
+ $ git checkout <branch>
+
+make changes:
+ $ pico shomefile.c
+ $ git commit -a -m 'some update to shomefile.c [issue53]'
+
+  (Note reference to branch in commit label)
+
+All changes are in this branch until another is checked out.
+
+Switch back to 'master'
+ $ git checkout master
+
+Edit master all you want, branch is unchanged. Fork another branch and edit that too.
+
+To merge the changes in a branch into the master (promote to production?)
+
+ $ git checkout master
+ $ git merge <branch>
+
+Look for CONFLICTs
+
+To remove the now unneeded branch
+
+ $ git branch -d <branch>
+
+To merge changes in master into this branch
+
+ $ git merge master (While in branch)
+
+To see what status is
+ $ git status
+
+Graphical merge tool is available:
+ $ git mergetool
+
+

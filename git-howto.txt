@@ -1,0 +1,198 @@
+This is a simple HOWTO for using git. There are X sections, 
+
+1) Starting with an empty project. Repo on remote, turnkey host.
+2) Starting with an existing project. Repo on remote, turnkey host.
+3) Starting with an empty project. Repo on remote, github host.
+4) Starting with an existing project. Repo on remote, github host.
+5) Using local turnkey to provide local repo of remote project
+
+Note: See Section 1 and 2 notes for creating new project
+-----------------------------------------------------------------
+1) Starting with an empty project. Repo is hosted on turnkey host.
+
+NOTE: use the 'create_new_repo.sh' script in the /src/repos/git folder 
+to create new repositories. Run with no args to get usage hints.
+
+On turnkey git server, login as your user. su to 'root'
+goto /srv/repos/git and create the new empty project directory:
+run 'git init --bare <NEW PROJECT NAME>.git', This will create a new 'bare' 
+empty repository.
+
+cd into it. Edit the 'description' file to give it a name and description.
+
+Run 'chown -R gitdaemon:git <folder>' on the newly created folder (IMPORTANT!)
+
+cd back one level and then cd to the public folder. Create a link to the 
+project folder: 'ln -s /srv/repos/git/<FOLDER>/ <FOLDER>' (not strictly 
+necessary, but allows browsing the project from the turnkey server website). 
+
+Make sure daemon is running from the /srv/repos folder. (This is mostly fixed
+by modifying the git-daemon startup script in /etc/init.d (see last entry this
+file).
+
+To start developing:
+on local computer, type "git clone git://cvs/git/<project>" this will check
+out the empty copy (you can do this at any time to get the current version
+of the project).
+
+Create a file, then:
+'git add file' or 'git add *' 
+'git commit -m "commit message"'
+'git push origin master'
+
+This should update the project on the server by pushing the added updates.
+To update a folder, do a 'git pull'
+
+----------------------
+2) Starting with an existing project. Repo on remote, turnkey host.
+
+NOTE: use the 'create_new_repo.sh' script in the /src/repos/git folder 
+to create new repositories. Run with no args to get usage hints.
+
+On turnkey git server, login as your user. su to 'root'
+goto /srv/repos/git and create the new empty project directory:
+run 'git init --bare <NEW PROJECT NAME>.git', This will create a new 'bare' 
+empty repository.
+
+cd into it. Edit the 'description' file to give it a name and description.
+
+cd back one level.
+
+Run 'chown -R gitdaemon:git <folder>' on the newly created folder (IMPORTANT!)
+
+cd to the public folder. Create a link to the project folder: 
+'ln -s /srv/repos/git/<FOLDER>/ <FOLDER>' (not strictly necessary, but allows browsing 
+the project from the turnkey server website). 
+
+Make sure daemon is running from the /srv/repos folder. (This is mostly fixed
+by modifying the git-daemon startup script in /etc/init.d (see last entry this
+file).
+
+To commit current project folder:
+On local computer where project currently resides. Cd to root of project.
+cleanup and remove any extraneous files (do a 'make clean' to remove o files)
+Run the following commands (where <gitfolder> is the folder created on the 
+server above):
+
+Initialize the local repo: 'git init'	
+Add the remote 'origin': 'git remote add origin git://cvs/git/<gitfolder>'
+Set the remote URL: 'git remote set-url origin git://cvs/git/<gitfolder>'
+add the project files: 'git add *'
+do the commit: 'git commit -m "initial commit of project"'
+Do the push: 'git push origin master'
+
+done!
+
+----------------------
+3) Starting with an empty project. Repo on remote, github host.
+Follow the instructions in the "...or create a new repository on the command 
+line" box on the newly created repo page.
+
+echo # bbbled >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin <GITHUBURL>
+git push -u origin master
+
+----------------------
+4) Starting with an existing project. Repo on remote, github host.
+
+Make sure you have an ssh key on file with github prior to trying any pushes.
+
+To move a project from normal folder to github after creating the repo on
+github first.
+
+Create repo on github. The text typed into the description form field
+during this process will become the contents of the README.md file. Make
+note of the github URL for the newly created project. 
+
+Go to the system where the project folder currently resides. 
+Method 1: We will clone the empty repo from github, add files, commit and push.
+Method 2: We will init the local folder, add the remote origin, add files, 
+commit and push.
+
+Method 1:
+Make sure the local project folder is NOT named the same as the github clone
+destination folder (e.g. github repo 'xxx-0.99' vs local
+folder 'xxx-0.99/').
+
+Do a 'git clone <URL FROM github repo>' of the empty repo from github.
+
+Move the files from the current folder to the new repo folder
+
+Jump to FINISH
+
+Method 2:
+
+cd into project folder, run a 'git init', 
+
+then do 'git remote add origin <URL>'
+where <URL> is https url shown in "...or push an existing repository from the 
+command line" box on newly created repo page.
+
+FINISH:
+Do a 'git add filename' to individually add each desired file to the new 
+repo -OR- do a 'git add *' to add all files at once.
+
+Do a 'git commit -m 'comment'' to create the commit request
+
+Do a 'git push origin master' -or- 'git push -u origin master' to update the 
+github repo.
+
+
+Each time a file is changed, you must do a 'git add file; git commit ...; git 
+push ...' cycle.
+
+------------------
+5) Using local turnkey to provide local repo of remote project
+
+go to /srv/repos/git. use the https clone command e.g.
+git clone https://github/owner/project.git
+
+this will clone into folder by project name
+
+run chall.sh to set permissions to git daemon
+
+run mklink.sh to add links for http web interface
+
+
+
+------------------
+Notes:
+At any time, you can run a 'git remote -v' to see where things will go.
+
+
+You can run a local git daemon like so (needs to be run from the /srv/repos
+folder).
+
+git daemon --reuseaddr --base-path=. --export-all --verbose --enable=receive-pack&
+
+-or-
+
+add a user called git (also group)
+modify the git-daemon service script in init.d/
+
+29,32c29,30
+< #GIT_DAEMON_BASE_PATH=${GIT_DAEMON_BASE_PATH:-/var/cache}
+< #GIT_DAEMON_DIRECTORY=${GIT_DAEMON_DIRECTORY:-/var/cache/git}
+< GIT_DAEMON_BASE_PATH=${GIT_DAEMON_BASE_PATH:-/srv/repos}
+< #GIT_DAEMON_DIRECTORY=${GIT_DAEMON_DIRECTORY:-/srv/repos/git}
+---
+> GIT_DAEMON_BASE_PATH=${GIT_DAEMON_BASE_PATH:-/var/cache}
+> GIT_DAEMON_DIRECTORY=${GIT_DAEMON_DIRECTORY:-/var/cache/git}
+
+and the git-daemon file in /etc/default
+12,13d11
+< #GIT_DAEMON_DIRECTORY=/srv/repos/git
+< GIT_DAEMON_DIRECTORY=
+16,17c14
+< #GIT_DAEMON_OPTIONS=""
+< GIT_DAEMON_OPTIONS="--enable=receive-pack --export-all"
+---
+> GIT_DAEMON_OPTIONS=""
+
+chown all git content in the /srv/repos/git folders to gitdaemon:git and 
+restart the service.
+
+

@@ -1,0 +1,8 @@
+  git init
+  git remote add origin git://cvs/git/tlvparse.git
+  git remote set-url origin git://cvs/git/tlvparse.git
+  git add *
+  git commit -m 'initial commit of project'
+  git push -u origin master
+ 
+

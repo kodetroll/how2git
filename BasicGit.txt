@@ -1,0 +1,119 @@
+Basic git commands: 
+
+Get a log of commits:
+ $ git log
+
+Commit process:
+
+ $ git add <files>
+ $ git commit -m 'comment' 
+     ---or---
+ $ git commit
+ $ git push origin <branch>
+
+To amend the prior commit
+
+ $ git add <forgotten file>
+ $ git commit --amend
+
+See: http://git-scm.com/book/en/v2/Git-Basics-Undoing-Things
+
+To show info about things 
+
+ $ git show
+
+get status of staging area:
+
+ $ git status
+
+To see difference between changed but not staged files:
+
+ $ git diff
+
+To see what is staged:
+
+ $ git diff --staged
+
+To remove a file from the project 
+
+ $ git rm FILE 
+
+Or, to keep a copy locally, but still remove from project used --cached
+
+ $ git rm --cached README
+
+To move a file (rename)
+
+ $ git mv filefrom fileto
+
+To see remote server info:
+
+ $ git remote
+
+To show the URL
+
+ $ git remote -v
+
+TO show info about the remote:
+
+ $ git remote show origin
+
+To show avaiable tags:
+
+ $ git tag
+
+ $ git tag -l 'saerch'
+
+To create a tag:
+
+ $ git tag -a <tag> -m 'comment'
+
+ e.g.
+
+ $ git tag -a v1.2 -m 'Version 1.2'
+
+To see info on a tag:
+
+ $ git show <tag>
+
+To add a tag after the commit (or commits), do a log to find the hex
+
+ $ git log --pretty=online
+ 15027957951b64cf874c3557a0f3547bd83b3ff6 Merge branch 'experiment'
+ a6b4c97498bd301d84096da251c98a07c7723e65 beginning write support
+ 0d52aaab4479697da7686c15f77a3d64d9165190 one more thing
+ 6d52a271eda8725415634dd79daabbc4d9b6008e Merge branch 'experiment'
+ 0b7434d86859cc7b8c3d5e1dddfed66ff742fcbc added a commit function
+ 4682c3261057305bdd616e23b64b0857d832627b added a todo file
+ 166ae0c4d3f420721acbb115cc33848dfcc2121a started write support
+ 9fceb02d0ae598e95dc970b74767f19372d61af8 updated rakefile
+ 964f16d36dfccde844893cac5b347e7b3d44abbc commit the todo
+ 8a5cbc430f1a9c3d00faaeffd07798508422908a updated readme
+
+We want to tag the "update rakefile" commit with tag 'v1.2'
+
+ $ git tag -a <Tag> <checksum>
+
+ $ git tag -a v1.2 9fceb02
+
+Then 'git tag' to see the tag in the list and 'git show <tag>' to inspect it.
+
+To update the server with a particular tag:
+
+ $ git push origin <tag>
+
+To push all tags:
+
+ $ git push origin --tags
+
+To 'checkout a tag' you can create a new branch at a specific tag:
+
+ $ git checkout -b <branch> <tag>
+ 
+
+To have git ignore clases of files: edit .gitignore and add 
+
+ $ cat .gitignore
+ *.[oa]
+ *~
+See: https://github.com/github/gitignore
